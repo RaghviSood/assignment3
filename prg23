@@ -1,0 +1,16 @@
+24.	package apps;
+25.	public class MathDemo {
+26.	
+27.	    public static void main(String[] args) {
+28.	        double randomValue = Math.random();
+29.	        System.out.println("Random value between 0.0 and 1.0: " + randomValue);
+30.	        int negativeNumber = -42;
+31.	        int absoluteValue = Math.abs(negativeNumber);
+32.	        System.out.println("Absolute value of " + negativeNumber + " is: " + absoluteValue);
+33.	        double base = 3;
+34.	        double exponent = 4;
+35.	        double powerResult = Math.pow(base, exponent);
+36.	        System.out.println(base + " raised to the power of " + exponent + " is: " + powerResult);
+37.	    }
+38.	}
+
