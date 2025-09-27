@@ -1,0 +1,29 @@
+package apps;
+
+public class CountdownAndTick {
+    public static void main(String[] args) {
+        Thread countdownThread = new Thread(() -> {
+            for (int i = 10; i >= 1; i--) {
+                System.out.println("Countdown: " + i);
+                try {
+                    Thread.sleep(1000); 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Thread tickThread = new Thread(() -> {
+            for (int i = 0; i < 20; i++) { 
+                System.out.println("Tick...");
+                try {
+                    Thread.sleep(500); 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        countdownThread.start();
+        tickThread.start();
+    }
+}
+
