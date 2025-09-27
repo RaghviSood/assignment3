@@ -1,0 +1,30 @@
+23.	package apps;
+24.	
+25.	import java.io.IOException;
+26.	import java.io.RandomAccessFile;
+27.	
+28.	public class RandomAccessFileExample {
+29.	    public static void main(String[] args) {
+30.	        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+31.	        String filename = "random_access_file.txt";
+32.	        try (RandomAccessFile raf = new RandomAccessFile(filename, "rw")) {
+33.	            String initialData = "Hello, this is the original file content.";
+34.	            raf.write(initialData.getBytes());
+35.	            System.out.println("Initial data written: " + initialData);
+36.	
+37.	            raf.seek(7);
+38.	
+39.	            String overwriteData = "WORLD";
+40.	            raf.write(overwriteData.getBytes());
+41.	            System.out.println("Overwritten data at position 7 with: " + overwriteData);
+42.	
+43.	            raf.seek(0);  // reset pointer to beginning
+44.	            byte[] buffer = new byte[(int) raf.length()];
+45.	            raf.readFully(buffer);
+46.	            System.out.println("Final file content: " + new String(buffer));
+47.	        } catch (IOException e) {
+48.	            System.err.println("IO Error: " + e.getMessage());
+49.	        }
+50.	    }
+51.	}
+
