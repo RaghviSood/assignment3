@@ -1,0 +1,19 @@
+18.	package apps;
+19.	
+20.	import java.io.BufferedReader;
+21.	import java.io.FileReader;
+22.	import java.io.IOException;
+23.	public class BufferedFileReader {
+24.	    public static void main(String[] args) {
+25.	        String filePath = "example.txt";
+26.	        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+27.	            String line;
+28.	            while ((line = br.readLine()) != null) {  
+29.	                System.out.println(line);
+30.	            }
+31.	        } catch (IOException e) {
+32.	            System.err.println("Error reading file: " + e.getMessage());
+33.	        }
+34.	    }
+35.	}
+
