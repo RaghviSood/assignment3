@@ -1,0 +1,43 @@
+package apps;
+
+class Inventory {
+    private int stock = 10; 
+    public void decreaseStock(String threadName, int quantity) {
+        System.out.println(threadName + " is trying to buy " + quantity + " item(s).");
+
+        synchronized (this) {
+            if (quantity <= stock) {
+                System.out.println(threadName + " purchase successful.");
+                stock -= quantity;
+                System.out.println("Stock remaining: " + stock);
+            } else {
+                System.out.println("Sorry " + threadName + ", not enough stock available.");
+            }
+        }
+    }
+}
+class StockThread extends Thread {
+    private Inventory inventory;
+    private String threadName;
+    private int quantity;
+
+    public StockThread(Inventory inventory, String threadName, int quantity) {
+        this.inventory = inventory;
+        this.threadName = threadName;
+        this.quantity = quantity;
+    }
+    public void run() {
+        inventory.decreaseStock(threadName, quantity);
+    }
+}
+public class InventoryManagement {
+    public static void main(String[] args) {
+        Inventory inventory = new Inventory();
+        StockThread t1 = new StockThread(inventory, "User1", 3);
+        StockThread t2 = new StockThread(inventory, "User2", 4);
+        StockThread t3 = new StockThread(inventory, "User3", 5); 
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
