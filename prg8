@@ -1,0 +1,49 @@
+package apps;
+class Chopstick {
+    private final String name;
+
+    public Chopstick(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+class Philosopher extends Thread {
+    private Chopstick leftChopstick;
+    private Chopstick rightChopstick;
+    public Philosopher(String name, Chopstick left, Chopstick right) {
+        super(name); 
+        this.leftChopstick = left;
+        this.rightChopstick = right;
+    }
+
+    @Override
+    public void run() {
+        synchronized (leftChopstick) {
+            System.out.println(getName() + " picked up left chopstick: " + leftChopstick.getName());
+            try {
+                Thread.sleep(100); 
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (rightChopstick) {
+                System.out.println(getName() + " picked up right chopstick: " + rightChopstick.getName());
+                System.out.println(getName() + " is eating.");
+            }
+        }
+    }
+}
+public class DiningPhilosophersDeadlock {
+    public static void main(String[] args) {
+        Chopstick c1 = new Chopstick("Chopstick-1");
+        Chopstick c2 = new Chopstick("Chopstick-2");
+        Philosopher p1 = new Philosopher("Philosopher-1", c1, c2);
+        Philosopher p2 = new Philosopher("Philosopher-2", c2, c1); 
+        p1.start();
+        p2.start();
+    }
+}
+
+
