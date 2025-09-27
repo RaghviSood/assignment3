@@ -1,0 +1,27 @@
+
+public class AutoSaveDemo {
+    public static void main(String[] args) {
+        Thread autoSaveThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(3000); // Sleep for 3 seconds
+                    System.out.println("Auto-Save in progress...");
+                } catch (InterruptedException e) {
+                    System.out.println("Auto-save thread interrupted.");
+                    break;
+                }
+            }
+        });
+        autoSaveThread.setDaemon(true);
+        autoSaveThread.start();
+        for (int i = 1; i <= 5; i++) {
+            System.out.println("Main thread processing file line " + i);
+            try {
+                Thread.sleep(2000); // Simulate processing time (2 seconds per line)
+            } catch (InterruptedException e) {
+                System.out.println("Main thread interrupted.");
+            }
+        }
+        System.out.println("Main thread finished file processing.");
+           }
+}
