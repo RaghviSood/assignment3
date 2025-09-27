@@ -1,0 +1,129 @@
+package apps;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
+
+public class DeadlockDemo {
+
+    private final Lock lock1 = new ReentrantLock();
+    private final Lock lock2 = new ReentrantLock();
+
+    public void deadlockThread1() {
+        lock1.lock();
+        System.out.println("Thread 1 acquired lock1");
+
+        try {
+            Thread.sleep(100);
+            System.out.println("Thread 1 waiting for lock2");
+            lock2.lock();
+            System.out.println("Thread 1 acquired lock2");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            if (lock2.tryLock()) {  // careful to avoid unlocking if not held, or just check
+                lock2.unlock();
+            }
+            lock1.unlock();
+        }
+    }
+
+    public void deadlockThread2() {
+        lock2.lock();
+        System.out.println("Thread 2 acquired lock2");
+
+        try {
+            Thread.sleep(100);
+            System.out.println("Thread 2 waiting for lock1");
+            lock1.lock();
+            System.out.println("Thread 2 acquired lock1");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            if (lock1.tryLock()) {
+                lock1.unlock();
+            }
+            lock2.unlock();
+        }
+    }
+
+    public void fixedThread1() {
+        try {
+            if (lock1.tryLock(500, TimeUnit.MILLISECONDS)) {
+                System.out.println("Fixed Thread 1 acquired lock1");
+                try {
+                    Thread.sleep(100);
+                    if (lock2.tryLock(500, TimeUnit.MILLISECONDS)) {
+                        try {
+                            System.out.println("Fixed Thread 1 acquired lock2");
+                        } finally {
+                            lock2.unlock();
+                        }
+                    } else {
+                        System.out.println("Fixed Thread 1 could not acquire lock2, releasing lock1");
+                    }
+                } finally {
+                    lock1.unlock();
+                }
+            } else {
+                System.out.println("Fixed Thread 1 could not acquire lock1");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fixedThread2() {
+        try {
+            if (lock2.tryLock(500, TimeUnit.MILLISECONDS)) {
+                System.out.println("Fixed Thread 2 acquired lock2");
+                try {
+                    Thread.sleep(100);
+                    if (lock1.tryLock(500, TimeUnit.MILLISECONDS)) {
+                        try {
+                            System.out.println("Fixed Thread 2 acquired lock1");
+                        } finally {
+                            lock1.unlock();
+                        }
+                    } else {
+                        System.out.println("Fixed Thread 2 could not acquire lock1, releasing lock2");
+                    }
+                } finally {
+                    lock2.unlock();
+                }
+            } else {
+                System.out.println("Fixed Thread 2 could not acquire lock2");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        DeadlockDemo demo = new DeadlockDemo();
+
+        System.out.println("Starting deadlock demonstration...");
+        Thread t1 = new Thread(demo::deadlockThread1);
+        Thread t2 = new Thread(demo::deadlockThread2);
+
+        t1.start();
+        t2.start();
+
+        t1.join(2000);
+        t2.join(2000);
+
+        System.out.println("\nDeadlock demo may be stuck. Now running fixed version...\n");
+
+        Thread f1 = new Thread(demo::fixedThread1);
+        Thread f2 = new Thread(demo::fixedThread2);
+
+        f1.start();
+        f2.start();
+
+        f1.join();
+        f2.join();
+
+        System.out.println("Fixed version finished without deadlock.");
+    }
+}
+
