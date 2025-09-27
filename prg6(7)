@@ -1,0 +1,40 @@
+package apps;
+class TicketCounter {
+    private int availableTickets = 5; // total available tickets
+    public synchronized void bookTicket(String userName, int numberOfTickets) {
+        System.out.println(userName + " is trying to book " + numberOfTickets + " ticket(s).");
+
+        if (numberOfTickets <= availableTickets) {
+            System.out.println("Booking successful for " + userName);
+            availableTickets -= numberOfTickets;
+            System.out.println("Tickets left: " + availableTickets);
+        } else {
+            System.out.println("Sorry " + userName + ", not enough tickets available.");
+        }
+    }
+}
+class UserThread extends Thread {
+    private TicketCounter counter;
+    private String userName;
+    private int ticketsToBook;
+
+    public UserThread(TicketCounter counter, String userName, int ticketsToBook) {
+        this.counter = counter;
+        this.userName = userName;
+        this.ticketsToBook = ticketsToBook;
+    }
+    public void run() {
+        counter.bookTicket(userName, ticketsToBook);
+    }
+}
+public class TicketBookingSystem {
+    public static void main(String[] args) {
+        TicketCounter counter = new TicketCounter();
+        UserThread user1 = new UserThread(counter, "A", 2);
+        UserThread user2 = new UserThread(counter, "B", 3);
+        UserThread user3 = new UserThread(counter, "C", 1); 
+        user1.start();
+        user2.start();
+        user3.start();
+    }
+}
