@@ -1,0 +1,28 @@
+19.	package apps;
+20.	
+21.	import java.io.File;
+22.	import java.io.IOException;
+23.	
+24.	public class FileExistenceCheck {
+25.	
+26.	    public static void main(String[] args) {
+27.	        String filePath = "testfile.txt";  
+28.	        File file = new File(filePath);
+29.	
+30.	        if (file.exists()) {
+31.	            System.out.println("File already exists: " + filePath);
+32.	        } else {
+33.	            try {
+34.	                boolean created = file.createNewFile();
+35.	                if (created) {
+36.	                    System.out.println("File created successfully: " + filePath);
+37.	                } else {
+38.	                    System.out.println("Failed to create the file: " + filePath);
+39.	                }
+40.	            } catch (IOException e) {
+41.	                System.err.println("An error occurred while creating the file: " + e.getMessage());
+42.	            }
+43.	        }
+44.	    }
+45.	}
+
